@@ -4,7 +4,7 @@
 int main()
 {
     // Open a UDP socket, pointing to localhost on port 9000
-    auto udpSender = hekky::osc::UdpSender("127.0.0.1", 9000, 9001);
+/*    auto udpSender = hekky::osc::UdpSender("127.0.0.1", 9000, 9001);
 
     auto message = hekky::osc::OscMessage("/osc/test/int32");
     message.Push(12);
@@ -33,14 +33,13 @@ int main()
     auto chainPacking = hekky::osc::OscMessage("/osc/vector/float32");
     chainPacking.Push(1.4142135624f).Push(3.1415926536f).Push(2.7182818285f);
     udpSender.Send(chainPacking);
+    */
     //this is a test for Ardour:
-    /*
     auto udpSender = hekky::osc::UdpSender("127.0.0.1", 3819, 8000); //3819 is the port where Ardour receives, 8000 where Ardour is sending to
 
     auto message = hekky::osc::OscMessage("/set_surface/feedback");
     message.PushInt32(15);
     udpSender.Send(message);
-    */
 
     
     

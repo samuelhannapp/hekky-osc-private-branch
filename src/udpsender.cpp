@@ -20,8 +20,8 @@ namespace hekky {
 #endif
         {
             m_isAlive = false;
-#ifdef HEKKYOSC_WINDOWS
             int result = 0;
+#ifdef HEKKYOSC_WINDOWS
             if (m_openSockets < 1) {
                 WSADATA wsaData;
                 // @TODO: Skip if other connections are open
@@ -37,18 +37,6 @@ namespace hekky {
             // Get localhost as a native network address
             m_localAddress.sin_family = AF_INET;
             m_localAddress.sin_addr.s_addr = INADDR_ANY;
-//             result = inet_pton(AF_INET, "127.0.0.1", &m_localAddress.sin_addr.s_addr);
-//             if (result == 0) {
-//                 HEKKYOSC_ASSERT(result == 0, "Invalid IP Address!");
-//                 return;
-//             } else if (result == -1) {
-// #ifdef HEKKYOSC_DOASSERTS
-//                 int errorCode = WSAGetLastError();
-//                 HEKKYOSC_ERR(std::string("WSA Error code: ") + std::to_string(errorCode) + "\nFor more information, please visit https://learn.microsoft.com/en-us/windows/win32/api/ws2tcpip/nf-ws2tcpip-inet_pton#return-value.\n");
-// #endif
-//                 HEKKYOSC_ASSERT(result == -1, "Failed to set IP Address!");
-//                 return;
-//             }
             m_localAddress.sin_port = htons(m_portIn);
 
             // Get the destination as a native network address
@@ -92,36 +80,38 @@ namespace hekky {
             m_isAlive = true;
 #endif
 #if defined(HEKKYOSC_LINUX) || defined(HEKKYOSC_MAC)
-int rc;
-  struct hostent *h;
-  /* IP-Adresse vom Server überprüfen */
-  h = gethostbyname (m_address.c_str());
-  if (h == NULL) {
-    printf (": unbekannter Host \n");
-    exit (EXIT_FAILURE);
-  }
-  printf (": sende Daten an '' (IP : local host) \n");
-  m_destinationAddress.sin_family = h->h_addrtype;
-  memcpy ( (char *) &m_destinationAddress.sin_addr.s_addr, h->h_addr_list[0], h->h_length);
-  m_destinationAddress.sin_port = htons (m_portOut);
-  /* Socket erzeugen */
-  m_nativeSocket = socket (AF_INET, SOCK_DGRAM, 0);
-  if (m_nativeSocket < 0) {
-     printf (": Kann Socket nicht öffnen () \n");
-     exit (EXIT_FAILURE);
-  }
-  /* Jeden Port bind(en) */
-  m_localAddress.sin_family = AF_INET;
-  m_localAddress.sin_addr.s_addr = htonl (INADDR_ANY);
-  m_localAddress.sin_port = htons (0);
-  rc = bind ( m_nativeSocket, (struct sockaddr *) &m_localAddress, sizeof (m_localAddress) );
-  if (rc < 0) {
-     printf (": Konnte Port nicht bind(en) ()\n");
-     exit (EXIT_FAILURE);
-  }
-    m_isAlive = true;
+            struct hostent *h;
+            //check ip adress
+            h = gethostbyname (m_address.c_str());
+            if (h == NULL) {
+                HEKKYOSC_ASSERT(result == 0, "Invalid IP Address!");
+                return;
+                //exit (EXIT_FAILURE);
+            }
+                m_openSockets++;
+            m_destinationAddress.sin_family = h->h_addrtype;
+            memcpy ( (char *) &m_destinationAddress.sin_addr.s_addr, h->h_addr_list[0], h->h_length);
+            m_destinationAddress.sin_port = htons (m_portOut);
+            // Open the network socket
+            m_nativeSocket = socket (AF_INET, SOCK_DGRAM, 0);
+            if (m_nativeSocket < 0) {
+                HEKKYOSC_ASSERT(result == SOCKET_ERROR, "Cannot open Socket!");
+                return;
+                //exit (EXIT_FAILURE);
+            }
+            //Bind network socket
+            m_localAddress.sin_family = AF_INET;
+            m_localAddress.sin_addr.s_addr = htonl (INADDR_ANY);
+            m_localAddress.sin_port = htons (0);
+            result = bind ( m_nativeSocket, (struct sockaddr *) &m_localAddress, sizeof (m_localAddress) );
+            if (result < 0) {
+                HEKKYOSC_ASSERT(result == SOCKET_ERROR, "Failed to bind to network socket!");
+                return;
+                //exit (EXIT_FAILURE);
+            }
+                m_isAlive = true;
 #endif
-}
+        }
 
         UdpSender::~UdpSender() {
             if (m_isAlive) {

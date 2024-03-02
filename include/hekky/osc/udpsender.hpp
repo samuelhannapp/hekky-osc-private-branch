@@ -95,10 +95,10 @@ namespace hekky {
 			uint32_t m_portIn;
 
 			static uint64_t m_openSockets;
-#ifdef HEKKYOSC_WINDOWS
+#if defined(HEKKYOSC_WINDOWS)
 			SOCKET m_nativeSocket;
 #endif
-#ifdef HEKKYOSC_LINUX
+#ifdef HEKKYOSC_LINUX || defined(HEKKYOSC_MAC)
 			int m_nativeSocket;
 #endif
 			sockaddr_in m_destinationAddress;

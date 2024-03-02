@@ -1,5 +1,5 @@
 #pragma once
-
+//#define HEKKYOSC_MAC
 #if _WIN32
 	#ifdef _WIN64
 		#define HEKKYOSC_WINDOWS
@@ -18,7 +18,6 @@
 	// Sorry, we do not support whatever you're trying to use!
 	#error "Unknown Platform!"
 #endif
-
 #if _DEBUG
 	#define HEKKYOSC_DOASSERTS
 #endif

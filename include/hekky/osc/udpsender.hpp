@@ -19,7 +19,7 @@
 
 #endif
 
-#ifdef HEKKYOSC_LINUX
+#if defined(HEKKYOSC_LINUX) || defined(HEKKYOSC_MAC)
 
 #include <sys/types.h>
 #include <sys/socket.h>
@@ -98,7 +98,7 @@ namespace hekky {
 #if defined(HEKKYOSC_WINDOWS)
 			SOCKET m_nativeSocket;
 #endif
-#ifdef HEKKYOSC_LINUX || defined(HEKKYOSC_MAC)
+#if defined(HEKKYOSC_LINUX) || defined(HEKKYOSC_MAC)
 			int m_nativeSocket;
 #endif
 			sockaddr_in m_destinationAddress;
